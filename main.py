@@ -19,7 +19,7 @@ from typing import Optional
 # Configuración
 SECRET_KEY = "your-secret-key-change-this"
 ALGORITHM = "HS256"
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./quickcontent.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///quickcontent.db")
 
 # OpenAI y Stripe (usar variables de entorno en producción)
 openai.api_key = os.getenv("OPENAI_API_KEY", "your-openai-key")
