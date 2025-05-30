@@ -133,10 +133,47 @@ def can_generate_post(user: User) -> bool:
 def generate_content_with_ai(topic: str, platform: str, tone: str) -> str:
     """Genera contenido usando OpenAI"""
     prompts = {
-        "instagram": f"Crea un post para Instagram sobre {topic} con un tono {tone}. Incluye hashtags relevantes y emojis. Máximo 150 palabras.",
-        "facebook": f"Crea un post para Facebook sobre {topic} con un tono {tone}. Debe ser conversacional y engagement. Máximo 200 palabras.",
-        "linkedin": f"Crea un post profesional para LinkedIn sobre {topic} con un tono {tone}. Enfócate en insights de valor. Máximo 250 palabras."
+        "instagram": f"""Crea un post ESPECÍFICO para Instagram sobre {topic} con tono {tone}:
+- Máximo 150 palabras
+- Incluye 5-8 hashtags relevantes
+- Usa emojis llamativos
+- Estilo visual y atractivo
+- Enfoque en lifestyle/inspiración
+- Incluye call-to-action para engagement""",
+        
+        "facebook": f"""Crea un post ESPECÍFICO para Facebook sobre {topic} con tono {tone}:
+- Entre 150-200 palabras
+- Estilo conversacional y personal
+- Haz preguntas para generar comentarios
+- Incluye storytelling
+- Enfoque en comunidad y discusión
+- Sin hashtags (Facebook no los usa tanto)""",
+        
+        "linkedin": f"""Crea un post ESPECÍFICO para LinkedIn sobre {topic} con tono {tone}:
+- Entre 200-300 palabras
+- Enfoque profesional y de negocios
+- Incluye insights valiosos
+- Menciona tendencias de industria
+- Formato de lista o puntos clave
+- Call-to-action profesional"""
     }
+    
+    try:
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=prompts.get(platform, prompts["instagram"]),
+            max_tokens=300,
+            temperature=0.8
+        )
+        return response.choices[0].text.strip()
+    except Exception as e:
+        # Fallback DIFERENTE para cada plataforma
+        fallbacks = {
+            "instagram": f"🚀 {topic} es clave para el éxito ✨\n\nDescubre cómo puede transformar tu día a día. La innovación está en los detalles.\n\n¿Cuál es tu experiencia? 💭\n\n#marketing #exito #innovacion #emprendimiento #motivacion",
+            "facebook": f"¡Hola amigos! Quería compartir algo interesante sobre {topic}.\n\nEs impresionante cómo este tema puede impactar nuestras vidas de maneras que no imaginamos. He estado investigando y los resultados son fascinantes.\n\n¿Ustedes qué opinan? ¿Han tenido experiencias similares? Me encantaría leer sus comentarios.",
+            "linkedin": f"Reflexionando sobre {topic} y su impacto en el mundo empresarial.\n\nTres puntos clave que he observado:\n\n1. La transformación digital está redefiniendo las reglas\n2. Las empresas que se adaptan lideran el mercado\n3. La innovación constante es ahora una necesidad\n\n¿Cómo está impactando esto en tu industria? Comparte tu perspectiva."
+        }
+        return fallbacks.get(platform, fallbacks["instagram"])
     
     try:
         response = openai.Completion.create(
