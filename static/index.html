@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickContent AI - Generador de Contenido IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+
+        .auth-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .generator-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .generated-content {
+            background: #f9fafb;
+            border: 2px dashed #d1d5db;
+            border-radius: 10px;
+            padding: 1.5rem;
+            min-height: 200px;
+            white-space: pre-wrap;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid #4f46e5;
+            transform: scale(1.05);
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4f46e5;
+            margin: 1rem 0;
+        }
+
+        .features {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .features li {
+            padding: 0.5rem 0;
+            color: #6b7280;
+        }
+
+        .features li:before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .auth-section, .generator-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="logo">🚀 QuickContent AI</div>
+            <div class="nav-buttons" id="navButtons">
+                <button class="btn btn-secondary" onclick="showLogin()">Iniciar Sesión</button>
+                <button class="btn btn-primary" onclick="showRegister()">Registrarse</button>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <div class="card hero" id="heroSection">
+            <h1>Genera Contenido Increíble con IA</h1>
+            <p>Crea posts profesionales para Instagram, Facebook y LinkedIn en segundos</p>
+            <button class="btn btn-primary" onclick="showRegister()">Empezar Gratis</button>
+        </div>
+
+        <!-- Auth Section -->
+        <div class="auth-section" id="authSection">
+            <!-- Login Form -->
+            <div class="card" id="loginCard">
+                <h2>Iniciar Sesión</h2>
+                <div class="alert alert-error" id="loginError"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+                </form>
+            </div>
+
+            <!-- Register Form -->
+            <div class="card" id="registerCard">
+                <h2>Registrarse</h2>
+                <div class="alert alert-error" id="registerError"></div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="registerPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Crear Cuenta</button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem; color: #6b7280;">
+                    ¡Plan gratuito incluye 5 posts al mes!
+                </p>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="dashboard" id="dashboardSection">
+            <!-- User Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="postsGenerated">0</h3>
+                    <p>Posts Generados</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="postsRemaining">5</h3>
+                    <p>Posts Restantes</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="currentPlan">FREE</h3>
+                    <p>Plan Actual</p>
+                </div>
+            </div>
+
+            <!-- Content Generator -->
+            <div class="card">
+                <h2>Generar Contenido</h2>
+                <div class="alert alert-success" id="generateSuccess"></div>
+                <div class="alert alert-error" id="generateError"></div>
+                
+                <div class="generator-section">
+                    <div>
+                        <form id="generateForm">
+                            <div class="form-group">
+                                <label>Tema del Post</label>
+                                <input type="text" id="postTopic" placeholder="Ej: Marketing digital, Productividad..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>Plataforma</label>
+                                <select id="postPlatform" required>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="facebook">Facebook</option>
+                                    <option value="linkedin">LinkedIn</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tono</label>
+                                <select id="postTone">
+                                    <option value="professional">Profesional</option>
+                                    <option value="casual">Casual</option>
+                                    <option value="friendly">Amigable</option>
+                                    <option value="motivational">Motivacional</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                🚀 Generar Contenido
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div>
+                        <label>Contenido Generado</label>
+                        <div class="generated-content" id="generatedContent">
+                            El contenido generado aparecerá aquí...
+                        </div>
+                        <button class="btn btn-secondary" onclick="copyContent()" style="width: 100%; margin-top: 1rem;">
+                            📋 Copiar Contenido
+                        </button>
+                    </div>
+                </div>
+
+                <div class="loading" id="generateLoading">
+                    <div class="spinner"></div>
+                    <p>Generando contenido con IA...</p>
+                </div>
+            </div>
+
+            <!-- Recent Posts -->
+            <div class="card">
+                <h2>Posts Recientes</h2>
+                <div id="recentPosts">
+                    <p style="color: #6b7280;">Tus posts generados aparecerán aquí...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div class="pricing-grid" id="pricingSection">
+            <div class="pricing-card">
+                <h3>Plan Gratuito</h3>
+                <div class="price">$0<span style="font-size: 1rem;">/mes</span></div>
+                <ul class="features">
+                    <li>5 posts por mes</li>
+                    <li>3 plataformas</li>
+                    <li>Plantillas básicas</li>
+                    <li>Soporte por email</li>
+                </ul>
+                <button class="btn btn-secondary" style="width: 100%;">Plan Actual</button>
+            </div>
+
+            <div class="pricing-card featured">
+                <h3>Plan Pro</h3>
+                <div class="price">$19<span style="font-size: 1rem;">/mes</span></div>
+                <ul class="features">
+                    <li>100 posts por mes</li>
+                    <li>Todas las plataformas</li>
+                    <li>Plantillas premium</li>
+                    <li>Análisis de rendimiento</li>
+                    <li>Soporte prioritario</li>
+                </ul>
+                <button class="btn btn-primary" onclick="upgradeplan('pro')" style="width: 100%;">
+                    Actualizar a Pro
+                </button>
+            </div>
+
+            <div class="pricing-card">
+                <h3>Plan Business</h3>
+                <div class="price">$49<span style="font-size: 1rem;">/mes</span></div>
+                <ul class="features">
+                    <li>500 posts por mes</li>
+                    <li>API access</li>
+                    <li>Automatización</li>
+                    <li>Reportes avanzados</li>
+                    <li>Manager dedicado</li>
+                </ul>
+                <button class="btn btn-primary" onclick="upgradeplan('business')" style="width: 100%;">
+                    Actualizar a Business
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado global
+        let currentUser = null;
+        let authToken = localStorage.getItem('authToken');
+
+        // API Base URL
+        const API_BASE = '';
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listeners
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('generateForm').addEventListener('submit', handleGenerate);
+
+            // Verificar si hay token guardado
+            if (authToken) {
+                fetchUserData();
+            }
+        });
+
+        // Funciones de UI
+        function showLogin() {
+            document.getElementById('registerCard').style.display = 'none';
+            document.getElementById('loginCard').style.display = 'block';
+        }
+
+        function showRegister() {
+            document.getElementById('loginCard').style.display = 'none';
+            document.getElementById('registerCard').style.display = 'block';
+        }
+
+        function showDashboard() {
+            document.getElementById('heroSection').style.display = 'none';
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+            document.getElementById('navButtons').innerHTML = `
+                <span style="color: white;">¡Hola, ${currentUser.email}!</span>
+                <button class="btn btn-secondary" onclick="logout()">Cerrar Sesión</button>
+            `;
+            loadRecentPosts();
+        }
+
+        function showAuth() {
+            document.getElementById('heroSection').style.display = 'block';
+            document.getElementById('authSection').style.display = 'grid';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('navButtons').innerHTML = `
+                <button class="btn btn-secondary" onclick="showLogin()">Iniciar Sesión</button>
+                <button class="btn btn-primary" onclick="showRegister()">Registrarse</button>
+            `;
+        }
+
+        function showAlert(type, message, elementId) {
+            const alert = document.getElementById(elementId);
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // Funciones de API
+        async function apiCall(endpoint, method = 'GET', data = null, requiresAuth = false) {
+            const config = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+
+            if (requiresAuth && authToken) {
+                config.headers['Authorization'] = `Bearer ${authToken}`;
+            }
+
+            if (data) {
+                config.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(API_BASE + endpoint, config);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.detail || 'Error en la solicitud');
+                }
+                
+                return result;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        // Autenticación
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const result = await apiCall('/api/login', 'POST', { email, password });
+                authToken = result.access_token;
+                localStorage.setItem('authToken', authToken);
+                await fetchUserData();
+                showDashboard();
+                showAlert('success', '¡Sesión iniciada correctamente!', 'loginError');
+            } catch (error) {
+                showAlert('error', error.message, 'loginError');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                const result = await apiCall('/api/register', 'POST', { email, password });
+                authToken = result.access_token;
+                localStorage.setItem('authToken', authToken);
+                await fetchUserData();
+                showDashboard();
+                showAlert('success', '¡Cuenta creada correctamente!', 'registerError');
+            } catch (error) {
+                showAlert('error', error.message, 'registerError');
+            }
+        }
+
+        async function fetchUserData() {
+            try {
+                currentUser = await apiCall('/api/me', 'GET', null, true);
+                updateUserStats();
+            } catch (error) {
+                logout();
+            }
+        }
+
+        function updateUserStats() {
+            document.getElementById('postsGenerated').textContent = currentUser.posts_generated;
+            document.getElementById('postsRemaining').textContent = currentUser.posts_remaining;
+            document.getElementById('currentPlan').textContent = currentUser.plan.toUpperCase();
+        }
+
+        function logout() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('authToken');
+            showAuth();
+        }
+
+        // Generación de contenido
+        async function handleGenerate(e) {
+            e.preventDefault();
+            
+            if (currentUser.posts_remaining <= 0) {
+                showAlert('error', '¡Has alcanzado el límite de posts! Actualiza tu plan.', 'generateError');
+                return;
+            }
+
+            const topic = document.getElementById('postTopic').value;
+            const platform = document.getElementById('postPlatform').value;
+            const tone = document.getElementById('postTone').value;
+
+            document.getElementById('generateLoading').style.display = 'block';
+            document.getElementById('generateForm').style.display = 'none';
+
+            try {
+                const result = await apiCall('/api/generate-content', 'POST', {
+                    topic, platform, tone
+                }, true);
+                
+                document.getElementById('generatedContent').textContent = result.content;
+                await fetchUserData(); // Actualizar stats
+                showAlert('success', '¡Contenido generado exitosamente!', 'generateSuccess');
+                loadRecentPosts();
+            } catch (error) {
+                showAlert('error', error.message, 'generateError');
+            } finally {
+                document.getElementById('generateLoading').style.display = 'none';
+                document.getElementById('generateForm').style.display = 'block';
+            }
+        }
+
+        async function loadRecentPosts() {
+            try {
+                const posts = await apiCall('/api/posts', 'GET', null, true);
+                const container = document.getElementById('recentPosts');
+                
+                if (posts.length === 0) {
+                    container.innerHTML = '<p style="color: #6b7280;">Aún no has generado posts...</p>';
+                    return;
+                }
+
+                container.innerHTML = posts.map(post => `
+                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <strong>${post.platform.toUpperCase()} - ${post.topic}</strong>
+                            <small style="color: #6b7280;">${new Date(post.created_at).toLocaleDateString()}</small>
+                        </div>
+                        <p style="white-space: pre-wrap; color: #374151;">${post.content}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading posts:', error);
+            }
+        }
+
+        function copyContent() {
+            const content = document.getElementById('generatedContent').textContent;
+            if (content && content !== 'El contenido generado aparecerá aquí...') {
+                navigator.clipboard.writeText(content).then(() => {
+                    showAlert('success', '¡Contenido copiado al portapapeles!', 'generateSuccess');
+                });
+            }
+        }
+
+        async function upgradeplan(plan) {
+            try {
+                const result = await apiCall('/api/create-checkout-session', 'POST', { plan }, true);
+                window.location.href = result.checkout_url;
+            } catch (error) {
+                alert('Error al procesar el pago: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
